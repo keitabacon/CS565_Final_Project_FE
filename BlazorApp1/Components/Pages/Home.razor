@@ -1,0 +1,22 @@
+﻿@page "/"
+
+<PageTitle>Teams</PageTitle>
+
+<h1>Teams</h1>
+
+<MudTable T="string" Items="@(new[] { "Keita" })">
+    <HeaderContent>
+        <MudTh>Team Name</MudTh>
+        <MudTh>Coach Name</MudTh>
+        <MudTh>Coach Contact</MudTh>
+        <MudTh>Age Group</MudTh>
+        <MudTh>Division</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>Keita</MudTd>
+        <MudTd>Keita</MudTd>
+        <MudTd>Keita</MudTd>
+        <MudTd>Keita</MudTd>
+        <MudTd>Keita</MudTd>
+    </RowTemplate>
+</MudTable>
