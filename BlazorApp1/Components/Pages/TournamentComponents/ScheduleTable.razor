@@ -1,0 +1,24 @@
+<MudSimpleTable Dense="true">
+    <thead>
+        <tr>
+            <th scope="col">Time</th>
+            <th scope="col">Matchup</th>
+            <th scope="col">Field</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var game in Games)
+        {
+            <tr>
+                <td>@game.Time</td>
+                <td>@game.Matchup</td>
+                <td>@game.Field</td>
+            </tr>
+        }
+    </tbody>
+</MudSimpleTable>
+
+@code {
+    [Parameter]
+    public IReadOnlyList<ScheduledGame> Games { get; set; } = [];
+}

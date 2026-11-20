@@ -1,0 +1,22 @@
+<MudTabs>
+    <MudTabPanel Text="Friday">
+        <ScheduleTable Games="@fridayGames" />
+    </MudTabPanel>
+    <MudTabPanel Text="Saturday">
+        <ScheduleTable Games="@saturdayGames" />
+    </MudTabPanel>
+    <MudTabPanel Text="Sunday">
+        <ScheduleTable Games="@sundayGames" />
+    </MudTabPanel>
+</MudTabs>
+
+@code {
+    private readonly IReadOnlyList<ScheduledGame> fridayGames =
+        [new("9:00 AM", "Banana vs. Falcons", "Field 1")];
+
+    private readonly IReadOnlyList<ScheduledGame> saturdayGames =
+        [new(Time: "9:00 AM", "Tigers vs. Apple", "Field 1")];
+
+    private readonly IReadOnlyList<ScheduledGame> sundayGames =
+        [new("9:00 AM", "shjfbadlnk vs. Potato", "Field 1")];
+}
