@@ -1,0 +1,19 @@
+@page "/venues"
+
+<PageTitle>Venues</PageTitle>
+
+<h1>Venues</h1>
+
+
+<MudTable T="string" Items="@(new[] { "Venues" })">
+    <HeaderContent>
+        <MudTh>Venue Name</MudTh>
+        <MudTh>Address</MudTh>
+        <MudTh>Availability</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>Venues</MudTd>
+        <MudTd>Venues</MudTd>
+        <MudTd>Venues</MudTd>
+    </RowTemplate>
+</MudTable>
