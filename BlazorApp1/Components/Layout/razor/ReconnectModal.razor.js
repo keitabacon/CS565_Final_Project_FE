@@ -1,14 +1,4 @@
-// Set up event handlers
-const reconnectModal = document.getElementById("components-reconnect-modal");
-reconnectModal.addEventListener("components-reconnect-state-changed", handleReconnectStateChanged);
-
-const retryButton = document.getElementById("components-reconnect-button");
-retryButton.addEventListener("click", retry);
-
-const resumeButton = document.getElementById("components-resume-button");
-resumeButton.addEventListener("click", resume);
-
-function handleReconnectStateChanged(event) {
+const handleReconnectStateChanged = function handleReconnectStateChanged(event) {
     if (event.detail.state === "show") {
         reconnectModal.showModal();
     } else if (event.detail.state === "hide") {
@@ -18,9 +8,9 @@ function handleReconnectStateChanged(event) {
     } else if (event.detail.state === "rejected") {
         location.reload();
     }
-}
+};
 
-async function retry() {
+const retry = async function retry() {
     document.removeEventListener("visibilitychange", retryWhenDocumentBecomesVisible);
 
     try {
@@ -43,9 +33,9 @@ async function retry() {
         // We got an exception, server is currently unavailable
         document.addEventListener("visibilitychange", retryWhenDocumentBecomesVisible);
     }
-}
+};
 
-async function resume() {
+const resume = async function resume() {
     try {
         const successful = await Blazor.resumeCircuit();
         if (!successful) {
@@ -54,10 +44,20 @@ async function resume() {
     } catch {
         reconnectModal.classList.replace("components-reconnect-paused", "components-reconnect-resume-failed");
     }
-}
+};
 
-async function retryWhenDocumentBecomesVisible() {
+const retryWhenDocumentBecomesVisible = async function retryWhenDocumentBecomesVisible() {
     if (document.visibilityState === "visible") {
         await retry();
     }
-}
+};
+
+// Set up event handlers
+const reconnectModal = document.getElementById("components-reconnect-modal");
+reconnectModal.addEventListener("components-reconnect-state-changed", handleReconnectStateChanged);
+
+const retryButton = document.getElementById("components-reconnect-button");
+retryButton.addEventListener("click", retry);
+
+const resumeButton = document.getElementById("components-resume-button");
+resumeButton.addEventListener("click", resume);
