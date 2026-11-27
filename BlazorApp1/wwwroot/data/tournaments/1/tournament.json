@@ -1,0 +1,124 @@
+{
+  "tournament_id": 1,
+  "tournament_name": "Fall Weekend Cup",
+  "start_date": "2026-11-06",
+  "end_date": "2026-11-08",
+  "scoring_rules": [
+    {
+      "point_name": "Win",
+      "point_value": 3
+    },
+    {
+      "point_name": "Draw",
+      "point_value": 1
+    },
+    {
+      "point_name": "Loss",
+      "point_value": 0
+    }
+  ],
+  "teams": [
+    {
+      "team_id": 2,
+      "team_name": "Lightning FC",
+      "coach_id": 2,
+      "coach_name": "Jordan Smith",
+      "coach_email": "jordan@example.com",
+      "age_group_id": 1,
+      "age_group": "Under 14",
+      "division_id": 1,
+      "division_name": "Division A"
+    },
+    {
+      "team_id": 3,
+      "team_name": "River City FC",
+      "coach_id": 3,
+      "coach_name": "Taylor Lee",
+      "coach_email": "taylor@example.com",
+      "age_group_id": 1,
+      "age_group": "Under 14",
+      "division_id": 1,
+      "division_name": "Division A"
+    },
+    {
+      "team_id": 1,
+      "team_name": "Thunder FC",
+      "coach_id": 1,
+      "coach_name": "Alex Johnson",
+      "coach_email": "alex@example.com",
+      "age_group_id": 1,
+      "age_group": "Under 14",
+      "division_id": 1,
+      "division_name": "Division A"
+    }
+  ],
+  "venues": [
+    {
+      "venue_id": 2,
+      "venue_name": "Central Park Field",
+      "availability": [
+        {
+          "availability_id": 4,
+          "available_from": "2026-11-06T18:00:00-08:00",
+          "available_until": "2026-11-06T22:00:00-08:00"
+        }
+      ]
+    },
+    {
+      "venue_id": 1,
+      "venue_name": "Riverside Field",
+      "availability": [
+        {
+          "availability_id": 1,
+          "available_from": "2026-11-06T16:00:00-08:00",
+          "available_until": "2026-11-06T21:00:00-08:00"
+        },
+        {
+          "availability_id": 2,
+          "available_from": "2026-11-07T08:00:00-08:00",
+          "available_until": "2026-11-07T20:00:00-08:00"
+        },
+        {
+          "availability_id": 3,
+          "available_from": "2026-11-08T09:00:00-08:00",
+          "available_until": "2026-11-08T16:00:00-08:00"
+        }
+      ]
+    }
+  ],
+  "matches": [
+    {
+      "match_id": 1,
+      "home_team_id": 1,
+      "home_team_name": "Thunder FC",
+      "away_team_id": 2,
+      "away_team_name": "Lightning FC",
+      "venue_id": 1,
+      "venue_name": "Riverside Field",
+      "start_time": "2026-11-06T16:00:00-08:00",
+      "end_time": "2026-11-06T17:30:00-08:00"
+    },
+    {
+      "match_id": 2,
+      "home_team_id": 3,
+      "home_team_name": "River City FC",
+      "away_team_id": 1,
+      "away_team_name": "Thunder FC",
+      "venue_id": 1,
+      "venue_name": "Riverside Field",
+      "start_time": "2026-11-07T10:00:00-08:00",
+      "end_time": "2026-11-07T11:30:00-08:00"
+    },
+    {
+      "match_id": 3,
+      "home_team_id": 2,
+      "home_team_name": "Lightning FC",
+      "away_team_id": 3,
+      "away_team_name": "River City FC",
+      "venue_id": 1,
+      "venue_name": "Riverside Field",
+      "start_time": "2026-11-08T11:00:00-08:00",
+      "end_time": "2026-11-08T12:30:00-08:00"
+    }
+  ]
+}

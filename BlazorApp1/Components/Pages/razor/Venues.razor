@@ -1,19 +1,110 @@
 @page "/venues"
+@rendermode InteractiveServer
+@using System.Text.Json
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment WebHostEnvironment
+@* Enable these directives when switching to the API.
+@using System.Net.Http.Json
+@inject IHttpClientFactory HttpClientFactory
+*@
 
 <PageTitle>Venues</PageTitle>
 
 <h1>Venues</h1>
 
+@if (_days.Count > 0)
+{
+    <MudTabs>
+        @foreach (var day in _days)
+        {
+            <MudTabPanel Text="@day.Date.ToString("dddd, MMM d")">
+                <MudTable T="VenueHours" Items="@day.Hours" Breakpoint="Breakpoint.Sm" Dense="true">
+                    <HeaderContent>
+                        <MudTh>Venue Name</MudTh>
+                        <MudTh>Availability</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd DataLabel="Venue Name">@context.VenueName</MudTd>
+                        <MudTd DataLabel="Availability">@($"{context.Start:h:mm tt} – {context.End:h:mm tt}")</MudTd>
+                    </RowTemplate>
+                    <NoRecordsContent>
+                        <MudText>No venue availability for this day.</MudText>
+                    </NoRecordsContent>
+                </MudTable>
+            </MudTabPanel>
+        }
+    </MudTabs>
+}
+else
+{
+    <p role="status">@(_loading ? "Loading venue availability…" : "Venue availability is unavailable.")</p>
+}
 
-<MudTable T="string" Items="@(new[] { "Venues" })">
-    <HeaderContent>
-        <MudTh>Venue Name</MudTh>
-        <MudTh>Address</MudTh>
-        <MudTh>Availability</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd>Venues</MudTd>
-        <MudTd>Venues</MudTd>
-        <MudTd>Venues</MudTd>
-    </RowTemplate>
-</MudTable>
+@code {
+    private static readonly JsonSerializerOptions VenueJsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+    };
+
+    private readonly List<VenueDay> _days = [];
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // API example. Replace both fixture reads below when enabling this.
+        // var client = HttpClientFactory.CreateClient("TournamentApi");
+        // var dates = await client.GetFromJsonAsync<TournamentDates>(
+        //     "tournaments/1/info", VenueJsonOptions);
+        // var response = await client.GetFromJsonAsync<VenuesResponse>(
+        //     "tournaments/1/venues", VenueJsonOptions);
+
+        var dates = await ReadFixtureAsync<TournamentDates>("info.json");
+        var response = await ReadFixtureAsync<VenuesResponse>("venues.json");
+
+        if (dates is not null && response is not null)
+        {
+            var windows = response.Venues
+                .SelectMany(venue => venue.Availability.Select(window => new VenueHours(
+                    venue.VenueName, window.AvailableFrom.DateTime, window.AvailableUntil.DateTime)))
+                .OrderBy(window => window.VenueName)
+                .ThenBy(window => window.Start)
+                .ToList();
+
+            for (var day = dates.StartDate; day <= dates.EndDate; day = day.AddDays(1))
+            {
+                var dayStart = day.ToDateTime(TimeOnly.MinValue);
+                var nextDay = dayStart.AddDays(1);
+                var hours = windows
+                    .Where(window => window.Start < nextDay && window.End > dayStart)
+                    .Select(window => window with
+                    {
+                        Start = window.Start < dayStart ? dayStart : window.Start,
+                        End = window.End > nextDay ? nextDay : window.End
+                    })
+                    .ToList();
+
+                _days.Add(new VenueDay(day, hours));
+            }
+        }
+
+        _loading = false;
+    }
+
+    private async Task<T?> ReadFixtureAsync<T>(string filename)
+    {
+        var file = WebHostEnvironment.WebRootFileProvider.GetFileInfo($"data/tournaments/1/{filename}");
+        if (!file.Exists)
+        {
+            return default;
+        }
+
+        await using var stream = file.CreateReadStream();
+        return await JsonSerializer.DeserializeAsync<T>(stream, VenueJsonOptions);
+    }
+
+    private sealed record TournamentDates(DateOnly StartDate, DateOnly EndDate);
+    private sealed record VenuesResponse(List<Venue> Venues);
+    private sealed record Venue(string VenueName, List<AvailabilityWindow> Availability);
+    private sealed record AvailabilityWindow(DateTimeOffset AvailableFrom, DateTimeOffset AvailableUntil);
+    private sealed record VenueDay(DateOnly Date, List<VenueHours> Hours);
+    private sealed record VenueHours(string VenueName, DateTime Start, DateTime End);
+}

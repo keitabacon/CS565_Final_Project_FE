@@ -3,6 +3,11 @@ using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpClient("TournamentApi", client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5000/");
+});
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();

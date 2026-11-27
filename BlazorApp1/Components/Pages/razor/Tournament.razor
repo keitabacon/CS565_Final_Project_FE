@@ -1,11 +1,85 @@
 ﻿@page "/tournament"
 @rendermode InteractiveServer
+<<<<<<< Updated upstream:BlazorApp1/Components/Pages/razor/Tournament.razor
 @using BlazorApp1.Components.Pages.TournamentComponents.razor
+=======
+@using System.Text.Json
+@using BlazorApp1.Components.Pages.TournamentComponents
+@using BlazorApp1.Components.Pages.TournamentComponents.razor
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment WebHostEnvironment
+@*
+@using System.Net.Http.Json
+@inject IHttpClientFactory HttpClientFactory
+
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+*@
+>>>>>>> Stashed changes:BlazorApp1/Components/Pages/Tournament.razor
 
 <PageTitle>Tournament</PageTitle>
 
-<h1>Tournament</h1>
+@if (_tournament is { } tournament && _gamesByDate is { } gamesByDate)
+{
+    <h1>@tournament.TournamentName</h1>
 
-<p>Actual tournament information</p>
+    <TournamentSchedule StartDate="@tournament.StartDate" EndDate="@tournament.EndDate"
+                        GamesByDate="@gamesByDate" />
+}
+else
+{
+    <h1>Tournament</h1>
+    <p role="status">@(_loading ? "Loading the tournament schedule…" : "The tournament schedule is unavailable.")</p>
+}
 
-<TournamentSchedule />
+@code {
+    private static readonly JsonSerializerOptions TournamentJsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+    };
+
+    private TournamentResponse? _tournament;
+    private ILookup<DateOnly, ScheduledGame>? _gamesByDate;
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // API example. 
+        // var client = HttpClientFactory.CreateClient("TournamentApi");
+        // _tournament = await client.GetFromJsonAsync<TournamentResponse>(
+        //     "tournaments/1", TournamentJsonOptions);
+
+        var file = WebHostEnvironment.WebRootFileProvider.GetFileInfo("data/tournaments/1/tournament.json");
+        if (file.Exists)
+        {
+            await using var stream = file.CreateReadStream();
+            _tournament = await JsonSerializer.DeserializeAsync<TournamentResponse>(stream, TournamentJsonOptions);
+            if (_tournament is { } tournament)
+            {
+                _gamesByDate = tournament.Matches
+                    .OrderBy(match => match.StartTime)
+                    .ThenBy(match => match.MatchId)
+                    .ToLookup(
+                        match => DateOnly.FromDateTime(match.StartTime.DateTime),
+                        match => new ScheduledGame(
+                            $"{match.StartTime:h:mm tt} – {match.EndTime:h:mm tt}",
+                            $"{match.HomeTeamName} vs. {match.AwayTeamName}",
+                            match.VenueName));
+            }
+        }
+
+        _loading = false;
+    }
+
+    private sealed record TournamentResponse(
+        string TournamentName,
+        DateOnly StartDate,
+        DateOnly EndDate,
+        List<Match> Matches);
+
+    private sealed record Match(
+        int MatchId,
+        string HomeTeamName,
+        string AwayTeamName,
+        string VenueName,
+        DateTimeOffset StartTime,
+        DateTimeOffset EndTime);
+}

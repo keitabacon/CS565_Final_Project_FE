@@ -1,24 +1,20 @@
-<MudSimpleTable Dense="true">
-    <thead>
-        <tr>
-            <th scope="col">Time</th>
-            <th scope="col">Matchup</th>
-            <th scope="col">Field</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var game in Games)
-        {
-            <tr>
-                <td>@game.Time</td>
-                <td>@game.Matchup</td>
-                <td>@game.Field</td>
-            </tr>
-        }
-    </tbody>
-</MudSimpleTable>
+<MudTable T="ScheduledGame" Items="@Games" Breakpoint="Breakpoint.Sm" Dense="true">
+    <HeaderContent>
+        <MudTh>Time</MudTh>
+        <MudTh>Matchup</MudTh>
+        <MudTh>Field</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Time">@context.Time</MudTd>
+        <MudTd DataLabel="Matchup">@context.Matchup</MudTd>
+        <MudTd DataLabel="Field">@context.Field</MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No matches scheduled for this day.</MudText>
+    </NoRecordsContent>
+</MudTable>
 
 @code {
     [Parameter]
-    public IReadOnlyList<ScheduledGame> Games { get; set; } = [];
+    public IEnumerable<ScheduledGame> Games { get; set; } = [];
 }

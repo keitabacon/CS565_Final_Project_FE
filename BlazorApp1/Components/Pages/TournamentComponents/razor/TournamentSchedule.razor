@@ -1,22 +1,20 @@
 <MudTabs>
-    <MudTabPanel Text="Friday">
-        <ScheduleTable Games="@fridayGames" />
-    </MudTabPanel>
-    <MudTabPanel Text="Saturday">
-        <ScheduleTable Games="@saturdayGames" />
-    </MudTabPanel>
-    <MudTabPanel Text="Sunday">
-        <ScheduleTable Games="@sundayGames" />
-    </MudTabPanel>
+    @for (var dayNumber = StartDate.DayNumber; dayNumber <= EndDate.DayNumber; dayNumber++)
+    {
+        var date = DateOnly.FromDayNumber(dayNumber);
+        <MudTabPanel Text="@date.ToString("dddd, MMM d")">
+            <ScheduleTable Games="@GamesByDate[date]" />
+        </MudTabPanel>
+    }
 </MudTabs>
 
 @code {
-    private readonly IReadOnlyList<ScheduledGame> fridayGames =
-        [new("9:00 AM", "Banana vs. Falcons", "Field 1")];
+    [Parameter, EditorRequired]
+    public DateOnly StartDate { get; set; }
 
-    private readonly IReadOnlyList<ScheduledGame> saturdayGames =
-        [new(Time: "9:00 AM", "Tigers vs. Apple", "Field 1")];
+    [Parameter, EditorRequired]
+    public DateOnly EndDate { get; set; }
 
-    private readonly IReadOnlyList<ScheduledGame> sundayGames =
-        [new("9:00 AM", "shjfbadlnk vs. Potato", "Field 1")];
+    [Parameter, EditorRequired]
+    public ILookup<DateOnly, ScheduledGame> GamesByDate { get; set; } = default!;
 }

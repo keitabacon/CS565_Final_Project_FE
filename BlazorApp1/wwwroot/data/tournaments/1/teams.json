@@ -1,0 +1,27 @@
+{
+  "tournament_id": 1,
+  "teams": [
+    {
+      "team_id": 2,
+      "team_name": "Lightning FC",
+      "coach_id": 2,
+      "coach_name": "Jordan Smith",
+      "coach_email": "jordan@example.com",
+      "age_group_id": 1,
+      "age_group": "Under 14",
+      "division_id": null,
+      "division_name": null
+    },
+    {
+      "team_id": 1,
+      "team_name": "Thunder FC",
+      "coach_id": 1,
+      "coach_name": "Alex Johnson",
+      "coach_email": "alex@example.com",
+      "age_group_id": 1,
+      "age_group": "Under 14",
+      "division_id": null,
+      "division_name": null
+    }
+  ]
+}

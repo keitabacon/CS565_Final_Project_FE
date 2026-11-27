@@ -1,22 +1,100 @@
 ﻿@page "/"
+@rendermode InteractiveServer
+@using System.Text.Json
+@using System.Net.Http.Json
+@inject IHttpClientFactory HttpClientFactory
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment WebHostEnvironment
 
 <PageTitle>Teams</PageTitle>
 
 <h1>Teams</h1>
 
-<MudTable T="string" Items="@(new[] { "Keita" })">
+<MudText HtmlTag="span">Item: @_selectedItemText</MudText>
+<MudText>Selected items (@_selectedTeams.Count): @string.Join(", ", _selectedTeams.Select(team => team.TeamName).OrderBy(name => name))</MudText>
+
+<MudTable T="Team" Items="@_teams" MultiSelection="true" SelectionChangeable="_selectionChangeable" Hover="true"
+          @bind-SelectedItems="_selectedTeams" OnRowClick="@OnRowClick" SelectOnRowClick="@_selectOnRowClick">
     <HeaderContent>
+        <MudTh>Id</MudTh>
         <MudTh>Team Name</MudTh>
-        <MudTh>Coach Name</MudTh>
-        <MudTh>Coach Contact</MudTh>
+        <MudTh>Coach</MudTh>
+        <MudTh>Coach Email</MudTh>
         <MudTh>Age Group</MudTh>
         <MudTh>Division</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd>Keita</MudTd>
-        <MudTd>Keita</MudTd>
-        <MudTd>Keita</MudTd>
-        <MudTd>Keita</MudTd>
-        <MudTd>Keita</MudTd>
+        <MudTd DataLabel="Id">@context.TeamId</MudTd>
+        <MudTd DataLabel="Team Name">@context.TeamName</MudTd>
+        <MudTd DataLabel="Coach">@context.CoachName</MudTd>
+        <MudTd DataLabel="Coach Email">@context.CoachEmail</MudTd>
+        <MudTd DataLabel="Age Group">@context.AgeGroup</MudTd>
+        <MudTd DataLabel="Division">@(context.DivisionName ?? "Unassigned")</MudTd>
     </RowTemplate>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
+    </PagerContent>
+    <FooterContent>
+        <MudTd colspan="6">Select All</MudTd>
+    </FooterContent>
 </MudTable>
+<MudSwitch @bind-Value="_selectOnRowClick" Color="Color.Primary">Select on row click</MudSwitch>
+<MudSwitch @bind-Value="_selectionChangeable" Color="Color.Primary">Selection is changeable</MudSwitch>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@(() => _createSchedule())">Create Schedule</MudButton>
+@code {
+    private static readonly JsonSerializerOptions TeamJsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
+    };
+
+    private HashSet<Team> _selectedTeams = [];
+    private IReadOnlyList<Team> _teams = [];
+    private bool _selectOnRowClick = true;
+    private bool _selectionChangeable = true;
+    private string _selectedItemText = "No row clicked";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var file = WebHostEnvironment.WebRootFileProvider.GetFileInfo("data/tournaments/1/teams.json");
+        await using var stream = file.CreateReadStream();
+        var response = await JsonSerializer.DeserializeAsync<TeamsResponse>(stream, TeamJsonOptions);
+        _teams = response?.Teams ?? [];
+
+        // API Call to for teams
+        //var httpClient = HttpClientFactory.CreateClient("TournamentApi");
+        //var response = await httpClient.GetFromJsonAsync<TeamsResponse>(
+        //    "tournaments/1/teams", TeamJsonOptions);
+    }
+
+    private void OnRowClick(TableRowClickEventArgs<Team> args)
+    {
+        if (args.Item is { } team)
+        {
+            _selectedItemText = $"{team.TeamName} ({team.TeamId})";
+        }
+    }
+
+    private sealed record TeamsResponse(List<Team> Teams);
+
+    private sealed record Team(
+        int TeamId,
+        string TeamName,
+        string CoachName,
+        string CoachEmail,
+        string AgeGroup,
+        string? DivisionName);
+
+    private async Task _createSchedule()
+    {
+        if (_selectedTeams.Count < 2)
+        {
+            _selectedItemText = "Select at least two teams to create a schedule.";
+            return;
+        }
+        // API Call to create schedule
+        //var httpClient = HttpClientFactory.CreateClient("TournamentApi");
+        //var response = await httpClient.GetFromJsonAsync<TeamsResponse>(
+        //    "tournaments/1/schedule", TeamJsonOptions);
+        _selectedItemText = $"Schedule created for {_selectedTeams.Count} teams.";
+    }
+}
