@@ -1,4 +1,4 @@
-using BlazorApp1.Components;
+using BlazorApp1.Components.razor;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);

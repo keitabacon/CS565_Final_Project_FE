@@ -1,0 +1,22 @@
+@page "/information"
+
+
+<PageTitle>Tournament Information</PageTitle>
+
+<h1>Tournament Information</h1>
+
+<p role="status">Points and stuff</p>
+
+
+<MudTable T="string" Items="@(new[] { "1" })">
+    <HeaderContent>
+        <MudTh>Wins</MudTh>
+        <MudTh>Losses</MudTh>
+        <MudTh>Goals</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>1</MudTd>
+        <MudTd>1</MudTd>
+        <MudTd>1</MudTd>
+    </RowTemplate>
+</MudTable>

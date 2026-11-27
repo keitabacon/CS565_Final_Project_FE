@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net11.0</TargetFramework>
+    <EnableDefaultScopedCssItems>false</EnableDefaultScopedCssItems>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
@@ -9,6 +10,12 @@
 
   <ItemGroup>
     <PackageReference Include="MudBlazor" Version="9.12.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ScopedCssInput Include="Components/Layout/css/MainLayout.razor.css" RazorComponent="Components/Layout/razor/MainLayout.razor" />
+    <ScopedCssInput Include="Components/Layout/css/NavMenu.razor.css" RazorComponent="Components/Layout/razor/NavMenu.razor" />
+    <ScopedCssInput Include="Components/Layout/css/ReconnectModal.razor.css" RazorComponent="Components/Layout/razor/ReconnectModal.razor" />
   </ItemGroup>
 
 </Project>
